@@ -38,7 +38,6 @@ _.mono/metadata/scripts_metadata.editor_player
 
 #other
 .vscode/settings.json
-.vscode/launch.json
 Data/Tiles/test/
 Untracked/
 
