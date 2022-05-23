@@ -24,4 +24,7 @@ using System.Net.NetworkInformation;
 public static class Globals
 {
     public static TestClient Client;
+    public static bool IsHost = false;
+    public static Relay Relay = null;
+    public static string PASSWORD = "666";
 }

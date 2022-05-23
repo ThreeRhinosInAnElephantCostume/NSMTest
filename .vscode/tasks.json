@@ -1,0 +1,19 @@
+{
+    "godot_tools.editor_path": "/home/user/godot/Godot_v3.4.4-stable_mono_x11_64/Godot_v3.4.4-stable_mono_x11.64",
+    "mono-debug.exceptionOptions": {
+        "System.Exception": "unhandled",
+        "System.SystemException": "unhandled",
+        "System.ArithmeticException": "unhandled",
+        "System.ArrayTypeMismatchException": "unhandled",
+        "System.DivideByZeroException": "unhandled",
+        "System.IndexOutOfRangeException": "unhandled",
+        "System.InvalidCastException": "unhandled",
+        "System.NullReferenceException": "unhandled",
+        "System.OutOfMemoryException": "unhandled",
+        "System.OverflowException": "unhandled",
+        "System.StackOverflowException": "unhandled",
+        "System.TypeInitializationException": "unhandled"
+    },
+    "omnisharp.organizeImportsOnFormat": true,
+    "omnisharp.useModernNet": true
+}

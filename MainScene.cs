@@ -24,14 +24,23 @@ using static Globals;
 
 public class MainScene : Spatial
 {
-    // Declare member variables here. Examples:
-    // private int a = 2;
-    // private string b = "text";
-
-    // Called when the node enters the scene tree for the first time.
+    static PackedScene PackedVirtualCursor = ResourceLoader.Load<PackedScene>("res://VirtualCursor.tscn");
+    public List<VirtualCursor> Cursors = new List<VirtualCursor>();
+    void OnPeerAdded(NetworkedStateMachine.Peer peer)
+    {
+        Assert(!Cursors.Any(it => it.Peer == peer));
+        var c = PackedVirtualCursor.Instance<VirtualCursor>();
+        Cursors.Add(c);
+        Defer(() => AddChild(c));
+        Defer(() => c.Peer = peer);
+    }
     public override void _Ready()
     {
-        
+        Client.OnPeerAdded += p => 
+        {
+            OnPeerAdded(p);
+        };
+        Client.Peers.ForEach(peer => OnPeerAdded(peer));
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

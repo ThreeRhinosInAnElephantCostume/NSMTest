@@ -20,6 +20,7 @@ using static Globals;
 public class LogIn : Control
 {
     Button _connectButton;
+    Button _hostButton;
     LineEdit _IPEdit;
     LineEdit _PortEdit;
     Label _outputLabel;
@@ -29,7 +30,7 @@ public class LogIn : Control
         output.Add(msg);
         _outputLabel.Text = string.Join('\n', output);
     }
-    void OnConnectPressed()
+    IPEndPoint TryParseAddress()
     {
         string ipstr = _IPEdit.Text;
         string portstr = _PortEdit.Text;
@@ -37,15 +38,22 @@ public class LogIn : Control
         if(!IPAddress.TryParse(ipstr, out ip))
         {
             OutputMessage("Could not parse IP!");
-            return;
+            return null;
         }
         ushort port = 0;
         if(!ushort.TryParse(portstr, out port))
         {
             OutputMessage("Could not parse port!");
-            return;
+            return null;
         }
-        Client = new TestClient(new IPEndPoint(ip, port));
+        return new IPEndPoint(ip, port);
+    }
+    void OnConnectPressed()
+    {
+        IPEndPoint endpoint = TryParseAddress();
+        if(endpoint == null)
+            return;
+        Client = new TestClient(endpoint, PASSWORD);
         Client.OnConnectionFailure = () => 
         {
             Defer(() => {OutputMessage("Connection failure!");});
@@ -55,16 +63,33 @@ public class LogIn : Control
             Defer(() => 
             {
                 OutputMessage("Connected!");
-                
+                _hostButton.Disabled = true;
+                _connectButton.Disabled = true;
+                Delay(1, () => 
+                {
+                    GetTree().ChangeScene("res://MainScene.tscn");
+                });
             });
         };
     }
+    void OnHostPressed()
+    {
+        _IPEdit.Text = "127.0.0.1";
+        IPEndPoint endpoint = TryParseAddress();
+        if(endpoint == null)
+            return;
+        IsHost = true;
+        Relay = new Networking.Relay((ushort)endpoint.Port, PASSWORD, PASSWORD);
+        OnConnectPressed();
+    }
     public override void _Ready()
     {
+        _hostButton = GetNode<Button>("CenterContainer/Panel/VBoxContainer/HostButton");
         _connectButton = GetNode<Button>("CenterContainer/Panel/VBoxContainer/ConnectButton");
         _IPEdit = GetNode<LineEdit>("CenterContainer/Panel/VBoxContainer/HBoxContainer/IPEdit");
         _PortEdit = GetNode<LineEdit>("CenterContainer/Panel/VBoxContainer/HBoxContainer/PortEdit");
         _outputLabel = GetNode<Label>("CenterContainer/Panel/VBoxContainer/Label");
         _connectButton.OnButtonPressed(OnConnectPressed);
+        _hostButton.OnButtonPressed(OnHostPressed);
     }
 }

@@ -29,7 +29,12 @@ public class MyCamera : Camera
         if(@event is InputEventMouseMotion mot)
         {
             Client.SendCursorPos(ProjectPosition(mot.Position, this.Translation.y));
+            Console.WriteLine("Pos: " + mot.Position.ToString());
         }
+    }
+    public override void _Input(InputEvent @event)
+    {
+        _UnhandledInput(@event);
     }
     public override void _Ready()
     {

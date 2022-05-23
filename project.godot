@@ -16,7 +16,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
-GlobalUtilsScript="*res://Carcassonne-Utils/GlobalUtilsScript.cs"
+GlobalUtilsScript="*res://Utils/GlobalUtilsScript.cs"
 
 [physics]
 

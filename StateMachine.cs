@@ -33,7 +33,14 @@ public class TestClient : NetworkedStateMachine
     public Action OnConnectionFailure = () => {};
     protected override void Logic()
     {
-        AwaitConnection().Wait();
+        try
+        {
+            AwaitConnection().Wait();
+        }
+        catch(NetConnectionErrorException ex)
+        {
+            OnConnectionLost(ex);
+        }
         OnOutput("connected");
         Console.WriteLine("connected");
         OnConnectionSuccessful();
@@ -50,7 +57,7 @@ public class TestClient : NetworkedStateMachine
             pos = pos,
         }, false, true);
     }
-    public TestClient(IPEndPoint relay) : base(relay)
+    public TestClient(IPEndPoint relay, string password) : base(relay, password, false)
     {
 
     }
