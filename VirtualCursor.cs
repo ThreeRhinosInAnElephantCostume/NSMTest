@@ -27,6 +27,7 @@ public class VirtualCursor : Spatial
 {
     NetworkedStateMachine.Peer _peer;
     Label _IDLabel;
+    MeshInstance _mesh;
     bool SubscribtionDelegate(NetworkedStateMachine.Subscribtion sub, NetworkedStateMachine.ReceivedMessage message)
     {
         Assert(message.Message is CursorMotionNM);
@@ -41,6 +42,15 @@ public class VirtualCursor : Spatial
         {
             _peer = value;
             Defer(() => _IDLabel.Text = "ID: " + _peer.ID.ToString());
+            Defer(() => 
+            {
+                var rng = new RNG((ulong)(Peer.ID*1000+666));
+                Color col = new Color(rng.NextFloat(), rng.NextFloat(), rng.NextFloat()*0.5f+0.5f);
+                var mat = new SpatialMaterial();
+                mat.AlbedoColor = col;
+                _mesh.MaterialOverride = mat;
+
+            });
             Client.Subscribe<CursorMotionNM>(_peer, (sub, message) => 
                 {Defer(() => SubscribtionDelegate(sub, message)); return true;});
         }
@@ -48,6 +58,7 @@ public class VirtualCursor : Spatial
     public override void _Ready()
     {
         _IDLabel = this.GetNodeSafe<Label>("Viewport/Label");
+        _mesh = this.GetNodeSafe<MeshInstance>("MeshInstance");
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
