@@ -23,6 +23,7 @@ public class LogIn : Control
     Button _hostButton;
     LineEdit _IPEdit;
     LineEdit _PortEdit;
+    LineEdit _nameEdit;
     Label _outputLabel;
     List<string> output = new List<string>();
     public void OutputMessage(string msg)
@@ -53,7 +54,7 @@ public class LogIn : Control
         IPEndPoint endpoint = TryParseAddress();
         if(endpoint == null)
             return;
-        Client = new TestClient(endpoint, PASSWORD);
+        Client = new TestClient(endpoint, _nameEdit.Text, PASSWORD);
         Client.OnConnectionFailure = () => 
         {
             Defer(() => {OutputMessage("Connection failure!");});
@@ -84,11 +85,12 @@ public class LogIn : Control
     }
     public override void _Ready()
     {
-        _hostButton = GetNode<Button>("CenterContainer/Panel/VBoxContainer/HostButton");
-        _connectButton = GetNode<Button>("CenterContainer/Panel/VBoxContainer/ConnectButton");
-        _IPEdit = GetNode<LineEdit>("CenterContainer/Panel/VBoxContainer/HBoxContainer/IPEdit");
-        _PortEdit = GetNode<LineEdit>("CenterContainer/Panel/VBoxContainer/HBoxContainer/PortEdit");
-        _outputLabel = GetNode<Label>("CenterContainer/Panel/VBoxContainer/Label");
+        _hostButton = GetNode<Button>("CenterContainer/VBoxContainer/HostButton");
+        _connectButton = GetNode<Button>("CenterContainer/VBoxContainer/ConnectButton");
+        _IPEdit = GetNode<LineEdit>("CenterContainer/VBoxContainer/IPEdit");
+        _PortEdit = GetNode<LineEdit>("CenterContainer/VBoxContainer/PortEdit");
+        _nameEdit = GetNode<LineEdit>("CenterContainer/VBoxContainer/NameEdit");
+        _outputLabel = GetNode<Label>("CenterContainer/VBoxContainer/Label");
         _connectButton.OnButtonPressed(OnConnectPressed);
         _hostButton.OnButtonPressed(OnHostPressed);
     }

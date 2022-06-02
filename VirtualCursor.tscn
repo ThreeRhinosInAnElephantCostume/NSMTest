@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://VirtualCursor.cs" type="Script" id=1]
 
@@ -10,6 +10,13 @@ albedo_color = Color( 1, 0, 0, 1 )
 [sub_resource type="ViewportTexture" id=3]
 viewport_path = NodePath("Viewport")
 
+[sub_resource type="Environment" id=4]
+background_mode = 1
+background_color = Color( 0, 0, 0, 0 )
+
+[sub_resource type="World" id=5]
+environment = SubResource( 4 )
+
 [node name="VirtualCursor" type="Spatial"]
 script = ExtResource( 1 )
 
@@ -19,20 +26,22 @@ mesh = SubResource( 1 )
 material/0 = SubResource( 2 )
 
 [node name="Sprite3D" type="Sprite3D" parent="MeshInstance"]
-transform = Transform( 3, 0, 0, 0, -1.31134e-07, -2, 0, 3, -8.74228e-08, 0, 1, 0 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1.2278, 0 )
+opacity = 0.8
+pixel_size = 0.1
 texture = SubResource( 3 )
 
 [node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 64, 32 )
+size = Vector2( 128, 12 )
+own_world = true
+world = SubResource( 5 )
 
-[node name="Label" type="Label" parent="Viewport"]
+[node name="Control" type="Control" parent="Viewport"]
 margin_right = 40.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-size_flags_vertical = 7
-text = "ID: xx"
+margin_bottom = 40.0
+
+[node name="Label" type="Label" parent="Viewport/Control"]
+margin_right = 128.0
+margin_bottom = 64.0
+text = "UNKNOWN"
 align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}

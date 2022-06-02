@@ -33,6 +33,10 @@ public class VirtualCursor : Spatial
         Assert(message.Message is CursorMotionNM);
         var cm = (CursorMotionNM)message.Message;
         this.Translation = cm.pos;
+        if(Globals.Client.names.ContainsKey(_peer.ID))
+        {
+            _IDLabel.Text = $"({_peer.ID})" +  Globals.Client.names[_peer.ID];
+        }
         return true;
     }
     public NetworkedStateMachine.Peer Peer
@@ -49,7 +53,6 @@ public class VirtualCursor : Spatial
                 var mat = new SpatialMaterial();
                 mat.AlbedoColor = col;
                 _mesh.MaterialOverride = mat;
-
             });
             Client.Subscribe<CursorMotionNM>(_peer, (sub, message) => 
                 {Defer(() => SubscribtionDelegate(sub, message)); return true;});
@@ -57,7 +60,7 @@ public class VirtualCursor : Spatial
     }
     public override void _Ready()
     {
-        _IDLabel = this.GetNodeSafe<Label>("Viewport/Label");
+        _IDLabel = this.GetNodeSafe<Label>("Viewport/Control/Label");
         _mesh = this.GetNodeSafe<MeshInstance>("MeshInstance");
     }
 

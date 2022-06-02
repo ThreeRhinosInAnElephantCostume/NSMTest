@@ -28,10 +28,18 @@ public class TestClient : NetworkedStateMachine
         public long id;
         public Vector3 pos;
     }
+    public struct NameMM
+    {
+        public long id;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string name;
+    }
     public Action<string> OnOutput = s => {};
     public Action OnConnectionSuccessful = () => {};
     public Action OnConnectionFailure = () => {};
-    protected override void Logic()
+    public Dictionary<long, string> names = new Dictionary<long, string>();
+    string _name;
+    protected override async void Logic()
     {
         try
         {
@@ -44,6 +52,12 @@ public class TestClient : NetworkedStateMachine
         OnOutput("connected");
         Console.WriteLine("connected");
         OnConnectionSuccessful();
+        while(true)
+        {
+            var othername = await AwaitMessage<NameMM>(null, -1);
+            if(!names.ContainsKey(othername.id))
+                names.Add(othername.id, othername.name);
+        }
     }
     protected override void OnConnectionLost(NetConnectionErrorException ex)
     {
@@ -57,8 +71,16 @@ public class TestClient : NetworkedStateMachine
             pos = pos,
         }, false, true);
     }
-    public TestClient(IPEndPoint relay, string password) : base(relay, password, false)
+    public TestClient(IPEndPoint relay, string password, string name) : base(relay, password, false)
     {
-
+        _name = name;
+        this.OnPeerAdded += (Peer p) => 
+        {
+            Send<NameMM>(p, new NameMM()
+            {
+                id = ID,
+                name = _name
+            });
+        };
     }
 }
