@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using static Networking;
 using System.Net.NetworkInformation;
+using Thread = System.Threading.Thread;
 
 public class TestClient : NetworkedStateMachine
 {
@@ -27,6 +28,7 @@ public class TestClient : NetworkedStateMachine
     {
         public long id;
         public Vector3 pos;
+        public bool IsPainting;
     }
     public struct NameMM
     {
@@ -63,12 +65,13 @@ public class TestClient : NetworkedStateMachine
     {
         OnConnectionFailure();
     }
-    public void SendCursorPos(Vector3 pos)
+    public void SendCursorPos(Vector3 pos, bool painting)
     {
         this.SendToAll<CursorMotionNM>(new CursorMotionNM()
         {
             id = this.ID, 
             pos = pos,
+            IsPainting = painting,
         }, false, true);
     }
     public TestClient(IPEndPoint relay, string password, string name) : base(relay, password, false)

@@ -27,4 +27,7 @@ public static class Globals
     public static bool IsHost = false;
     public static Relay Relay = null;
     public static string PASSWORD = "666";
+
+    public static VirtualCursor OwnCursor;
+    internal static string Name;
 }

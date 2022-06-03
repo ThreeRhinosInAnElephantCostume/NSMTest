@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://VirtualCursor.cs" type="Script" id=1]
 
@@ -16,6 +16,8 @@ background_color = Color( 0, 0, 0, 0 )
 
 [sub_resource type="World" id=5]
 environment = SubResource( 4 )
+
+[sub_resource type="ArrayMesh" id=6]
 
 [node name="VirtualCursor" type="Spatial"]
 script = ExtResource( 1 )
@@ -45,3 +47,6 @@ margin_right = 128.0
 margin_bottom = 64.0
 text = "UNKNOWN"
 align = 1
+
+[node name="MeshInstance2" type="MeshInstance" parent="."]
+mesh = SubResource( 6 )

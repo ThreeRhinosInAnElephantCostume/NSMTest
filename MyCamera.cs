@@ -28,8 +28,11 @@ public class MyCamera : Camera
     {
         if(@event is InputEventMouseMotion mot)
         {
-            Client.SendCursorPos(ProjectPosition(mot.Position, this.Translation.y));
-            Console.WriteLine("Pos: " + mot.Position.ToString());
+            var proj = ProjectPosition(mot.Position, this.Translation.y);
+            bool painting = Input.IsMouseButtonPressed((int)ButtonList.Left);
+            Client.SendCursorPos(proj, painting);
+            OwnCursor.Translation = proj;
+            OwnCursor.TickPaiting(painting, proj);
         }
     }
     public override void _Input(InputEvent @event)

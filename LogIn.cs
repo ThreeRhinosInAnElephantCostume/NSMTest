@@ -54,7 +54,8 @@ public class LogIn : Control
         IPEndPoint endpoint = TryParseAddress();
         if(endpoint == null)
             return;
-        Client = new TestClient(endpoint, _nameEdit.Text, PASSWORD);
+        Globals.Name = _nameEdit.Text;
+        Client = new TestClient(endpoint, PASSWORD, Globals.Name);
         Client.OnConnectionFailure = () => 
         {
             Defer(() => {OutputMessage("Connection failure!");});

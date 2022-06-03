@@ -26,17 +26,50 @@ using static TestClient;
 public class VirtualCursor : Spatial
 {
     NetworkedStateMachine.Peer _peer;
-    Label _IDLabel;
+    public Label IDLabel;
+    public MainScene MS;
     MeshInstance _mesh;
+    Color _color;
+    void UpdateLabel()
+    {
+        if(_peer == null)
+            return;
+        if(Globals.Client.names.ContainsKey(_peer.ID))
+        {
+            IDLabel.Text = $"({_peer.ID})" +  Globals.Client.names[_peer.ID];
+        }
+    }
+    int _paintID;
+    bool _painting = false;
+    Vector3 _lastPaint;
+    public void TickPaiting(bool IsPainting, Vector3 pos)
+    {
+        if(IsPainting)
+        {
+            if(_painting)
+            {
+                _lastPaint = pos;
+                MS.Paint(_paintID, pos);
+            }   
+            else
+            {
+                _painting = true;
+                _lastPaint = pos;
+                _paintID = MS.StartPaint(_color, pos);
+            }
+        }
+        else
+        {
+            _painting = false;
+        }
+    }
     bool SubscribtionDelegate(NetworkedStateMachine.Subscribtion sub, NetworkedStateMachine.ReceivedMessage message)
     {
         Assert(message.Message is CursorMotionNM);
         var cm = (CursorMotionNM)message.Message;
         this.Translation = cm.pos;
-        if(Globals.Client.names.ContainsKey(_peer.ID))
-        {
-            _IDLabel.Text = $"({_peer.ID})" +  Globals.Client.names[_peer.ID];
-        }
+        UpdateLabel();
+        TickPaiting(cm.IsPainting, cm.pos);
         return true;
     }
     public NetworkedStateMachine.Peer Peer
@@ -45,7 +78,6 @@ public class VirtualCursor : Spatial
         set
         {
             _peer = value;
-            Defer(() => _IDLabel.Text = "ID: " + _peer.ID.ToString());
             Defer(() => 
             {
                 var rng = new RNG((ulong)(Peer.ID*1000+666));
@@ -53,6 +85,7 @@ public class VirtualCursor : Spatial
                 var mat = new SpatialMaterial();
                 mat.AlbedoColor = col;
                 _mesh.MaterialOverride = mat;
+                _color = col;
             });
             Client.Subscribe<CursorMotionNM>(_peer, (sub, message) => 
                 {Defer(() => SubscribtionDelegate(sub, message)); return true;});
@@ -60,8 +93,9 @@ public class VirtualCursor : Spatial
     }
     public override void _Ready()
     {
-        _IDLabel = this.GetNodeSafe<Label>("Viewport/Control/Label");
+        IDLabel = this.GetNodeSafe<Label>("Viewport/Control/Label");
         _mesh = this.GetNodeSafe<MeshInstance>("MeshInstance");
+        Defer(UpdateLabel);
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
